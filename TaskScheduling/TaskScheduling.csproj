@@ -50,14 +50,18 @@
     <Compile Include="Configuration\ISchedulingConfigurationItem.cs" />
     <Compile Include="Configuration\SchedulingConfiguration.cs" />
     <Compile Include="Configuration\SchedulingConfigurationItem.cs" />
-    <Compile Include="Enums\ActionTypes.cs" />
-    <Compile Include="Enums\SchedulerEvents.cs" />
+    <Compile Include="Enums\ActionType.cs" />
+    <Compile Include="Enums\EventType.cs" />
     <Compile Include="Extensions\TimerModelListExtensions.cs" />
+    <Compile Include="Models\EventModel.cs" />
     <Compile Include="Models\TimerModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scheduling\EventScheduler.cs" />
+    <Compile Include="Scheduling\IEventScheduler.cs" />
     <Compile Include="Scheduling\IObserver.cs" />
-    <Compile Include="Scheduling\IScheduler.cs" />
-    <Compile Include="Scheduling\Scheduler.cs" />
+    <Compile Include="Scheduling\IObserverSubject.cs" />
+    <Compile Include="Scheduling\ITimerScheduler.cs" />
+    <Compile Include="Scheduling\TimerScheduler.cs" />
     <Compile Include="Services\Configuration.cs" />
     <Compile Include="Services\IConfiguration.cs" />
   </ItemGroup>

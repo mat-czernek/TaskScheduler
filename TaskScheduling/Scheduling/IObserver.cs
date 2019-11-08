@@ -5,6 +5,6 @@ namespace TaskScheduling.Scheduling
 {
     public interface IObserver
     {
-        void RequestActionProcessing(ActionTypes actionType);
+        void RequestActionProcessing(ActionType actionType);
     }
 }

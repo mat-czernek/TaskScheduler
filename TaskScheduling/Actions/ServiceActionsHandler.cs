@@ -5,18 +5,18 @@ namespace TaskScheduling.Actions
 {
     public class ServiceActionsHandler : IObserver
     {
-        public void RequestActionProcessing(ActionTypes actionType)
+        public void RequestActionProcessing(ActionType actionType)
         {
             switch (actionType)
             {
-                case ActionTypes.InstallUpdates:
+                case ActionType.InstallUpdates:
                 {
                     var installUpdates = new InstallUpdatesAction();
                     installUpdates.Execute();
                     return;
                 }
 
-                case ActionTypes.Maintenance:
+                case ActionType.Maintenance:
                 {
                     var selfHeal = new Maintenance();
                     selfHeal.Execute();

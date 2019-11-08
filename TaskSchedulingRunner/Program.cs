@@ -1,6 +1,7 @@
 ﻿using System;
 using TaskScheduling.Actions;
 using TaskScheduling.Configuration;
+using TaskScheduling.Enums;
 using TaskScheduling.Scheduling;
 using TaskScheduling.Services;
 
@@ -8,9 +9,11 @@ namespace TaskSchedulingRunner
 {
     internal class Program
     {
-        public static ISchedulingConfiguration SchedulingSettings { get; set; }
+        private static IConfiguration AppConfiguration { get; set; }
         
-        public static IConfiguration AppConfiguration { get; set; }
+        private static ITimerScheduler TimeSchedule { get; set; }
+        
+        private static IEventScheduler EventSchedule { get; set; }
 
         public static void Main(string[] args)
         {
@@ -20,18 +23,23 @@ namespace TaskSchedulingRunner
 
            var actionsHandler = new ServiceActionsHandler();
 
-           var scheduler = new Scheduler(AppConfiguration);
+           TimeSchedule = new TimerScheduler(AppConfiguration);
            
-           scheduler.Start();
-
-           scheduler.AttachObserver(actionsHandler);
+           EventSchedule = new EventScheduler(AppConfiguration);
            
-           scheduler.Stop();
+           TimeSchedule.AttachObserver(actionsHandler);
+           EventSchedule.AttachObserver(actionsHandler);
            
-           scheduler.DetachObserver(actionsHandler);
+           TimeSchedule.Start();
            
-
+           EventSchedule.OnEvent(EventType.OnUserLogoff);
+           
            Console.ReadKey();
+           
+           TimeSchedule.Stop();
+           
+           TimeSchedule.DetachObserver(actionsHandler);
+           EventSchedule.DetachObserver(actionsHandler);
         }
     }
 }

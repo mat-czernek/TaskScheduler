@@ -10,7 +10,7 @@ namespace TaskScheduling.Configuration
         
         List<DateTime> Schedules { get; set; }
         
-        List<SchedulerEvents> Events { get; set; }
+        List<EventType> Events { get; set; }
         
         int RandomDelayInterval { get; set; }
     }

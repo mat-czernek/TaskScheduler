@@ -1,7 +1,8 @@
 ﻿namespace TaskScheduling.Enums
 {
-    public enum ActionTypes
+    public enum ActionType
     {
+        InvalidAction,
         InstallUpdates,
         Maintenance
     }
