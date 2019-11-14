@@ -9,67 +9,61 @@ namespace TaskScheduling.Scheduling
 {
     public class EventScheduler : IEventScheduler
     {
-        private readonly List<IObserver> _schedulerObservers;
+        private readonly List<IObserver> _schedulerObserversList;
 
-        private readonly IConfiguration _configuration;
+        private static List<EventModel> _maintenanceEventsList = new List<EventModel>();
 
-        private readonly List<EventModel> _maintenanceEvents;
-
-        private readonly List<EventModel> _installUpdatesEvents;
+        private static List<EventModel> _installUpdatesEventsList = new List<EventModel>();
         
-        public EventScheduler(IConfiguration configuration)
+        public EventScheduler(IConfiguration applicationConfiguration)
         {
-            _configuration = configuration;
+            var applicationConfiguration1 = applicationConfiguration;
             
-            _schedulerObservers = new List<IObserver>();
+            _schedulerObserversList = new List<IObserver>();
+
+            _maintenanceEventsList = _initialiseEvents(applicationConfiguration1.Scheduling.Maintenance.Events,
+                _maintenanceObserversNotification).ToList();
+
+            _installUpdatesEventsList = _initialiseEvents(applicationConfiguration1.Scheduling.InstallUpdates.Events,
+                _installUpdatesObserversNotification).ToList();
             
-            _maintenanceEvents = new List<EventModel>();
-            
-            _installUpdatesEvents = new List<EventModel>();
-            
-            _setupEvents();
         }
 
-
-        private void _setupEvents()
+        private static IEnumerable<EventModel> _initialiseEvents(IEnumerable<EventType> events,
+            EventCallbackMethodDelegate eventCallbackMethod)
         {
-            foreach (var maintenanceEvent in _configuration.Scheduling.Maintenance.Events)
+            foreach (var eventType in events)
             {
-                var eventModel = new EventModel {Event = maintenanceEvent};
-                eventModel.EventCallbackMethod += _maintenanceObserversNotification;
-                _maintenanceEvents.Add(eventModel);
-            }
+                var eventModel = new EventModel();
+                eventModel.Event = eventType;
+                eventModel.EventCallbackMethod += eventCallbackMethod;
 
-            foreach (var installUpdatesEvent in _configuration.Scheduling.InstallUpdates.Events)
-            {
-                var eventModel = new EventModel {Event = installUpdatesEvent};
-                eventModel.EventCallbackMethod += _installUpdatesObserversNotification;
-                _installUpdatesEvents.Add(eventModel);
+                yield return eventModel;
             }
         }
 
         public void OnEvent(EventType eventType)
         {
-            _maintenanceEvents.Where(item => item.Event == eventType).ToList().ForEach(item => item.EventCallbackMethod());
+            _maintenanceEventsList.Where(item => item.Event == eventType).ToList().ForEach(item => item.EventCallbackMethod());
             
-            _installUpdatesEvents.Where(item => item.Event == eventType).ToList().ForEach(item => item.EventCallbackMethod());
+            _installUpdatesEventsList.Where(item => item.Event == eventType).ToList().ForEach(item => item.EventCallbackMethod());
         }
 
         public void AttachObserver(IObserver observer)
         {
-            _schedulerObservers.Add(observer);
+            _schedulerObserversList.Add(observer);
         }
 
         public void DetachObserver(IObserver observer)
         {
-            _schedulerObservers.Remove(observer);
+            _schedulerObserversList.Remove(observer);
         }
         
         private void _installUpdatesObserversNotification()
         {
             try
             {
-                foreach (var observer in _schedulerObservers)
+                foreach (var observer in _schedulerObserversList)
                 {
                     observer.RequestActionProcessing(ActionType.InstallUpdates);
                 }
@@ -85,7 +79,7 @@ namespace TaskScheduling.Scheduling
         {
             try
             {
-                foreach (var observer in _schedulerObservers)
+                foreach (var observer in _schedulerObserversList)
                 {
                     observer.RequestActionProcessing(ActionType.Maintenance);
                 }

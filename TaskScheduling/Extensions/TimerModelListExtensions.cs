@@ -7,7 +7,7 @@ namespace TaskScheduling.Extensions
 {
     public static class TimerModelListExtensions
     {
-        public static void ResetTimer(this List<TimerModel> timers, Guid timerId, TimeSpan nextCycle)
+        public static void RescheduleTimer(this List<TimerModel> timers, Guid timerId, TimeSpan nextCycle)
         {
             if(timerId == Guid.Empty)
                 return;

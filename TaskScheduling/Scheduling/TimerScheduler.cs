@@ -14,132 +14,74 @@ namespace TaskScheduling.Scheduling
     {
         private delegate void TimerCallbackMethodDelegate(Guid timerId);
         
-        private readonly List<IObserver> _schedulerObservers;
+        private readonly List<IObserver> _schedulerObserversList;
 
-        private readonly IConfiguration _configuration;
+        private readonly IConfiguration _applicationConfiguration;
 
-        private static List<TimerModel> _installUpdatesTimers = new List<TimerModel>();
+        private static List<TimerModel> _installUpdatesTimersList = new List<TimerModel>();
         
-        private static List<TimerModel> _maintenanceTimers = new List<TimerModel>();
+        private static List<TimerModel> _maintenanceTimersList = new List<TimerModel>();
 
-        private bool _isSchedulerStopped;
+        private bool _isRunning;
 
-        public TimerScheduler(IConfiguration configuration)
+        public TimerScheduler(IConfiguration applicationConfiguration)
         {
-            _configuration = configuration;
+            _applicationConfiguration = applicationConfiguration;
             
-            _schedulerObservers = new List<IObserver>();
+            _schedulerObserversList = new List<IObserver>();
         }
         
         public void AttachObserver(IObserver observer)
         {
-            _schedulerObservers.Add(observer);
+            _schedulerObserversList.Add(observer);
         }
         
         public void DetachObserver(IObserver observer)
         {
-            _schedulerObservers.Remove(observer);
+            _schedulerObserversList.Remove(observer);
         }
 
         public void Stop()
         {
-            _isSchedulerStopped = true;
-            _releaseTimers();
+            _isRunning = false;
+            _deleteTimers();
         }
 
         public void Start()
         {
-            _isSchedulerStopped = false;
+            _isRunning = true;
             
-            _releaseTimers();
+            _deleteTimers();
             
-            if(_configuration.Scheduling.Maintenance.IsEnabled)
+            if(_applicationConfiguration.Scheduling.Maintenance.IsEnabled)
             {
-                _maintenanceTimers = _setupTimers(_configuration.Scheduling.Maintenance.Schedules,
-                    _maintenanceObserversNotification, _configuration.Scheduling.Maintenance.RandomDelayInterval).ToList();
+                _maintenanceTimersList = _initializeTimers(_applicationConfiguration.Scheduling.Maintenance.Schedules,
+                    _maintenanceObserversNotification, _applicationConfiguration.Scheduling.Maintenance.RandomDelayInterval).ToList();
             }
 
-            if(_configuration.Scheduling.InstallUpdates.IsEnabled)
+            if(_applicationConfiguration.Scheduling.InstallUpdates.IsEnabled)
             {
-                _installUpdatesTimers = _setupTimers(_configuration.Scheduling.InstallUpdates.Schedules,
-                    _installUpdatesObserversNotification, _configuration.Scheduling.InstallUpdates.RandomDelayInterval).ToList();
+                _installUpdatesTimersList = _initializeTimers(_applicationConfiguration.Scheduling.InstallUpdates.Schedules,
+                    _installUpdatesObserversNotification, _applicationConfiguration.Scheduling.InstallUpdates.RandomDelayInterval).ToList();
             }
         }
 
-        public void OnEvent(EventType eventType)
+        private static void _deleteTimers()
         {
-            switch (eventType)
+            if (_maintenanceTimersList != null && _maintenanceTimersList.Any())
             {
-                case EventType.OnSessionUnlock:
-                    if (_configuration.Scheduling.InstallUpdates.Events.FirstOrDefault(e =>
-                            e == EventType.OnSessionUnlock) != EventType.Undefined)
-                    {
-                        _installUpdatesObserversNotification(Guid.Empty);
-                    }
-                    if (_configuration.Scheduling.Maintenance.Events.FirstOrDefault(e =>
-                            e == EventType.OnSessionUnlock) != EventType.Undefined)
-                    {
-                        _maintenanceObserversNotification(Guid.Empty);
-                    }
-                    break;
-                case EventType.OnServiceStart:
-                    if (_configuration.Scheduling.InstallUpdates.Events.FirstOrDefault(e =>
-                            e == EventType.OnServiceStart) != EventType.Undefined)
-                    {
-                        _installUpdatesObserversNotification(Guid.Empty);
-                    }
-                    if (_configuration.Scheduling.Maintenance.Events.FirstOrDefault(e =>
-                            e == EventType.OnServiceStart) != EventType.Undefined)
-                    {
-                        _maintenanceObserversNotification(Guid.Empty);
-                    }
-                    break;
-                case EventType.OnSessionLock:
-                    if (_configuration.Scheduling.InstallUpdates.Events.FirstOrDefault(e =>
-                            e == EventType.OnSessionLock) != EventType.Undefined)
-                    {
-                        _installUpdatesObserversNotification(Guid.Empty);
-                    }
-                    if (_configuration.Scheduling.Maintenance.Events.FirstOrDefault(e =>
-                            e == EventType.OnSessionLock) != EventType.Undefined)
-                    {
-                        _maintenanceObserversNotification(Guid.Empty);
-                    }
-                    break;
-                case EventType.OnUserLogoff:
-                    if (_configuration.Scheduling.InstallUpdates.Events.FirstOrDefault(e =>
-                            e == EventType.OnUserLogoff) != EventType.Undefined)
-                    {
-                        _installUpdatesObserversNotification(Guid.Empty);
-                    }
-                    if (_configuration.Scheduling.Maintenance.Events.FirstOrDefault(e =>
-                            e == EventType.OnUserLogoff) != EventType.Undefined)
-                    {
-                        _maintenanceObserversNotification(Guid.Empty);
-                    }
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(eventType), eventType, null);
+                _maintenanceTimersList.KillTimers();
+                _maintenanceTimersList.Clear();
+            }
+
+            if (_installUpdatesTimersList != null && _installUpdatesTimersList.Any())
+            {
+                _installUpdatesTimersList.KillTimers();
+                _installUpdatesTimersList.Clear();
             }
         }
 
-
-        private static void _releaseTimers()
-        {
-            if (_maintenanceTimers != null && _maintenanceTimers.Any())
-            {
-                _maintenanceTimers.KillTimers();
-                _maintenanceTimers.Clear();
-            }
-
-            if (_installUpdatesTimers != null && _installUpdatesTimers.Any())
-            {
-                _installUpdatesTimers.KillTimers();
-                _installUpdatesTimers.Clear();
-            }
-        }
-
-        private IEnumerable<TimerModel> _setupTimers(IEnumerable<DateTime> schedules,
+        private static IEnumerable<TimerModel> _initializeTimers(IEnumerable<DateTime> schedules,
             TimerCallbackMethodDelegate timerCallbackMethod, int randomDelay)
         {
             foreach (var schedule in schedules)
@@ -170,9 +112,9 @@ namespace TaskScheduling.Scheduling
         {
             try
             {
-                if(_isSchedulerStopped) return;
+                if(!_isRunning) return;
                 
-                foreach (var observer in _schedulerObservers)
+                foreach (var observer in _schedulerObserversList)
                 {
                     observer.RequestActionProcessing(ActionType.InstallUpdates);
                 }
@@ -184,7 +126,7 @@ namespace TaskScheduling.Scheduling
             finally
             {
                 if(timerId != Guid.Empty)
-                    _installUpdatesTimers.ResetTimer(timerId, TimeSpan.FromHours(24));
+                    _installUpdatesTimersList.RescheduleTimer(timerId, TimeSpan.FromHours(24));
             }
             
         }
@@ -194,9 +136,9 @@ namespace TaskScheduling.Scheduling
 
             try
             {
-                if(_isSchedulerStopped) return;
+                if(!_isRunning) return;
                 
-                foreach (var observer in _schedulerObservers)
+                foreach (var observer in _schedulerObserversList)
                 {
                     observer.RequestActionProcessing(ActionType.Maintenance);
                 }
@@ -208,7 +150,7 @@ namespace TaskScheduling.Scheduling
             finally
             {
                 if(timerId != Guid.Empty)
-                    _maintenanceTimers.ResetTimer(timerId, TimeSpan.FromHours(24));
+                    _maintenanceTimersList.RescheduleTimer(timerId, TimeSpan.FromHours(24));
             }
             
         }

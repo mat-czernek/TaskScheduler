@@ -1,6 +1,5 @@
 ﻿using System;
 using TaskScheduling.Actions;
-using TaskScheduling.Configuration;
 using TaskScheduling.Enums;
 using TaskScheduling.Scheduling;
 using TaskScheduling.Services;
@@ -28,6 +27,7 @@ namespace TaskSchedulingRunner
            EventSchedule = new EventScheduler(AppConfiguration);
            
            TimeSchedule.AttachObserver(actionsHandler);
+           
            EventSchedule.AttachObserver(actionsHandler);
            
            TimeSchedule.Start();
@@ -39,6 +39,7 @@ namespace TaskSchedulingRunner
            TimeSchedule.Stop();
            
            TimeSchedule.DetachObserver(actionsHandler);
+           
            EventSchedule.DetachObserver(actionsHandler);
         }
     }
