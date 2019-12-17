@@ -3,7 +3,7 @@
     public enum ActionType
     {
         InvalidAction,
-        InstallUpdates,
-        Maintenance
+        DatabaseBackup,
+        CloseSessions
     }
 }

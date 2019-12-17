@@ -10,6 +10,9 @@ using TaskScheduling.Services;
 
 namespace TaskScheduling.Scheduling
 {
+    /// <summary>
+    /// Class schedules actions using the Tasks (from System.Threading)
+    /// </summary>
     public class TimerScheduler : ITimerScheduler
     {
         private delegate void TimerCallbackMethodDelegate(Guid timerId);
@@ -53,16 +56,16 @@ namespace TaskScheduling.Scheduling
             
             _deleteTimers();
             
-            if(_applicationConfiguration.Scheduling.Maintenance.IsEnabled)
+            if(_applicationConfiguration.Scheduling.CloseSessions.IsEnabled)
             {
-                _maintenanceTimersList = _initializeTimers(_applicationConfiguration.Scheduling.Maintenance.Schedules,
-                    _maintenanceObserversNotification, _applicationConfiguration.Scheduling.Maintenance.RandomDelayInterval).ToList();
+                _maintenanceTimersList = _initializeTimers(_applicationConfiguration.Scheduling.CloseSessions.Schedules,
+                    _maintenanceObserversNotification, _applicationConfiguration.Scheduling.CloseSessions.RandomDelayInterval).ToList();
             }
 
-            if(_applicationConfiguration.Scheduling.InstallUpdates.IsEnabled)
+            if(_applicationConfiguration.Scheduling.DatabaseBackup.IsEnabled)
             {
-                _installUpdatesTimersList = _initializeTimers(_applicationConfiguration.Scheduling.InstallUpdates.Schedules,
-                    _installUpdatesObserversNotification, _applicationConfiguration.Scheduling.InstallUpdates.RandomDelayInterval).ToList();
+                _installUpdatesTimersList = _initializeTimers(_applicationConfiguration.Scheduling.DatabaseBackup.Schedules,
+                    _installUpdatesObserversNotification, _applicationConfiguration.Scheduling.DatabaseBackup.RandomDelayInterval).ToList();
             }
         }
 
@@ -116,7 +119,7 @@ namespace TaskScheduling.Scheduling
                 
                 foreach (var observer in _schedulerObserversList)
                 {
-                    observer.RequestActionProcessing(ActionType.InstallUpdates);
+                    observer.RequestActionProcessing(ActionType.DatabaseBackup);
                 }
             }
             catch
@@ -140,7 +143,7 @@ namespace TaskScheduling.Scheduling
                 
                 foreach (var observer in _schedulerObserversList)
                 {
-                    observer.RequestActionProcessing(ActionType.Maintenance);
+                    observer.RequestActionProcessing(ActionType.CloseSessions);
                 }
             }
             catch

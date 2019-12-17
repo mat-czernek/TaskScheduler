@@ -2,8 +2,8 @@
 {
     public interface ISchedulingConfiguration
     {
-        SchedulingConfigurationItem InstallUpdates { get; set; }
+        SchedulingConfigurationItem DatabaseBackup { get; set; }
         
-        SchedulingConfigurationItem Maintenance { get; set; }
+        SchedulingConfigurationItem CloseSessions { get; set; }
     }
 }

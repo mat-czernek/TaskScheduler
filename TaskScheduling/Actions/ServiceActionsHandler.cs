@@ -9,16 +9,16 @@ namespace TaskScheduling.Actions
         {
             switch (actionType)
             {
-                case ActionType.InstallUpdates:
+                case ActionType.DatabaseBackup:
                 {
-                    var installUpdates = new InstallUpdatesAction();
+                    var installUpdates = new DatabaseBackupAction();
                     installUpdates.Execute();
                     return;
                 }
 
-                case ActionType.Maintenance:
+                case ActionType.CloseSessions:
                 {
-                    var selfHeal = new Maintenance();
+                    var selfHeal = new CloseSessionsAction();
                     selfHeal.Execute();
                     return;
                 }

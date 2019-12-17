@@ -17,14 +17,12 @@ namespace TaskScheduling.Scheduling
         
         public EventScheduler(IConfiguration applicationConfiguration)
         {
-            var applicationConfiguration1 = applicationConfiguration;
-            
             _schedulerObserversList = new List<IObserver>();
 
-            _maintenanceEventsList = _initialiseEvents(applicationConfiguration1.Scheduling.Maintenance.Events,
+            _maintenanceEventsList = _initialiseEvents(applicationConfiguration.Scheduling.CloseSessions.Events,
                 _maintenanceObserversNotification).ToList();
 
-            _installUpdatesEventsList = _initialiseEvents(applicationConfiguration1.Scheduling.InstallUpdates.Events,
+            _installUpdatesEventsList = _initialiseEvents(applicationConfiguration.Scheduling.DatabaseBackup.Events,
                 _installUpdatesObserversNotification).ToList();
             
         }
@@ -65,7 +63,7 @@ namespace TaskScheduling.Scheduling
             {
                 foreach (var observer in _schedulerObserversList)
                 {
-                    observer.RequestActionProcessing(ActionType.InstallUpdates);
+                    observer.RequestActionProcessing(ActionType.DatabaseBackup);
                 }
             }
             catch
@@ -81,7 +79,7 @@ namespace TaskScheduling.Scheduling
             {
                 foreach (var observer in _schedulerObserversList)
                 {
-                    observer.RequestActionProcessing(ActionType.Maintenance);
+                    observer.RequestActionProcessing(ActionType.CloseSessions);
                 }
             }
             catch

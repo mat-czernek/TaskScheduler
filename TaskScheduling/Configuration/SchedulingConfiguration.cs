@@ -2,8 +2,8 @@
 {
     public class SchedulingConfiguration : ISchedulingConfiguration
     {
-        public SchedulingConfigurationItem InstallUpdates { get; set; }
+        public SchedulingConfigurationItem DatabaseBackup { get; set; }
         
-        public SchedulingConfigurationItem Maintenance { get; set; }
+        public SchedulingConfigurationItem CloseSessions { get; set; }
     }
 }
