@@ -1,6 +1,6 @@
 ﻿namespace TaskScheduling.Configuration
 {
-    public class SchedulingConfiguration : ISchedulingConfiguration
+    public class SchedulingConfiguration
     {
         public SchedulingConfigurationItem DatabaseBackup { get; set; }
         

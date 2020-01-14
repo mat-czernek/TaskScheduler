@@ -7,7 +7,7 @@ namespace TaskScheduling.Services
 {
     public class Configuration : IConfiguration
     {
-        public ISchedulingConfiguration Scheduling { get; private set; }
+        public SchedulingConfiguration Scheduling { get; private set; }
 
         public Configuration()
         {

@@ -3,6 +3,9 @@ using TaskScheduling.Scheduling;
 
 namespace TaskScheduling.Actions
 {
+    /// <summary>
+    /// Class implements execution of various types of actions
+    /// </summary>
     public class ServiceActionsHandler : IObserver
     {
         public void RequestActionProcessing(ActionType actionType)

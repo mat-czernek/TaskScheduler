@@ -11,8 +11,6 @@ namespace TaskSchedulingRunner
         private static IConfiguration AppConfiguration { get; set; }
         
         private static ITimerScheduler TimeSchedule { get; set; }
-        
-        private static IEventScheduler EventSchedule { get; set; }
 
         public static void Main(string[] args)
         {
@@ -24,23 +22,15 @@ namespace TaskSchedulingRunner
 
            TimeSchedule = new TimerScheduler(AppConfiguration);
            
-           EventSchedule = new EventScheduler(AppConfiguration);
-           
            TimeSchedule.AttachObserver(actionsHandler);
            
-           EventSchedule.AttachObserver(actionsHandler);
-           
            TimeSchedule.Start();
-           
-           EventSchedule.OnEvent(EventType.OnUserLogoff);
            
            Console.ReadKey();
            
            TimeSchedule.Stop();
            
            TimeSchedule.DetachObserver(actionsHandler);
-           
-           EventSchedule.DetachObserver(actionsHandler);
         }
     }
 }

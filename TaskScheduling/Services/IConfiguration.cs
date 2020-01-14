@@ -4,7 +4,7 @@ namespace TaskScheduling.Services
 {
     public interface IConfiguration
     {
-        ISchedulingConfiguration Scheduling { get; }
+        SchedulingConfiguration Scheduling { get; }
         
         void Read(string configurationFileName);
     }

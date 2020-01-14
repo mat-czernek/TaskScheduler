@@ -46,8 +46,6 @@
     <Compile Include="Actions\DatabaseBackupAction.cs" />
     <Compile Include="Actions\CloseSessionsAction.cs" />
     <Compile Include="Actions\ServiceActionsHandler.cs" />
-    <Compile Include="Configuration\ISchedulingConfiguration.cs" />
-    <Compile Include="Configuration\ISchedulingConfigurationItem.cs" />
     <Compile Include="Configuration\SchedulingConfiguration.cs" />
     <Compile Include="Configuration\SchedulingConfigurationItem.cs" />
     <Compile Include="Enums\ActionType.cs" />
@@ -56,8 +54,6 @@
     <Compile Include="Models\EventModel.cs" />
     <Compile Include="Models\TimerModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Scheduling\EventScheduler.cs" />
-    <Compile Include="Scheduling\IEventScheduler.cs" />
     <Compile Include="Scheduling\IObserver.cs" />
     <Compile Include="Scheduling\IObserverSubject.cs" />
     <Compile Include="Scheduling\ITimerScheduler.cs" />

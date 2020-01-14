@@ -17,16 +17,32 @@ namespace TaskScheduling.Scheduling
     {
         private delegate void TimerCallbackMethodDelegate(Guid timerId);
         
+        /// <summary>
+        /// List of the class/object observers
+        /// </summary>
         private readonly List<IObserver> _schedulerObserversList;
 
+        /// <summary>
+        /// Configuration binding
+        /// </summary>
         private readonly IConfiguration _applicationConfiguration;
 
-        private static List<TimerModel> _installUpdatesTimersList = new List<TimerModel>();
+        /// <summary>
+        /// List of timers (schedules) for close sessions action
+        /// </summary>
+        private static List<TimerModel> _closeSessionsTimersList = new List<TimerModel>();
         
-        private static List<TimerModel> _maintenanceTimersList = new List<TimerModel>();
+        /// <summary>
+        /// List of timers (schedules) for update database action 
+        /// </summary>
+        private static List<TimerModel> _updateDatabaseTimersList = new List<TimerModel>();
 
+        /// <summary>
+        /// Determines whether the scheduler is running or not
+        /// </summary>
         private bool _isRunning;
 
+        
         public TimerScheduler(IConfiguration applicationConfiguration)
         {
             _applicationConfiguration = applicationConfiguration;
@@ -34,53 +50,70 @@ namespace TaskScheduling.Scheduling
             _schedulerObserversList = new List<IObserver>();
         }
         
+        /// <summary>
+        /// Method attach the observer to the class
+        /// </summary>
+        /// <param name="observer">Instance of the class which implements the IObserver interface</param>
         public void AttachObserver(IObserver observer)
         {
             _schedulerObserversList.Add(observer);
         }
         
+        /// <summary>
+        /// Method detach the observer from the class
+        /// </summary>
+        /// <param name="observer">Instance of the class which implements the IObserver interface</param>
         public void DetachObserver(IObserver observer)
         {
             _schedulerObserversList.Remove(observer);
         }
 
+        /// <summary>
+        /// Method stops scheduler and removes all timers
+        /// </summary>
         public void Stop()
         {
             _isRunning = false;
-            _deleteTimers();
+            _cleanTimers();
         }
 
+        /// <summary>
+        /// Method starts the scheduler
+        /// </summary>
         public void Start()
         {
             _isRunning = true;
             
-            _deleteTimers();
+            _cleanTimers();
             
             if(_applicationConfiguration.Scheduling.CloseSessions.IsEnabled)
             {
-                _maintenanceTimersList = _initializeTimers(_applicationConfiguration.Scheduling.CloseSessions.Schedules,
-                    _maintenanceObserversNotification, _applicationConfiguration.Scheduling.CloseSessions.RandomDelayInterval).ToList();
+                _updateDatabaseTimersList = _initializeTimers(_applicationConfiguration.Scheduling.CloseSessions.Schedules,
+                    _closeSessionsObserversNotification, _applicationConfiguration.Scheduling.CloseSessions.RandomDelayInterval).ToList();
             }
 
             if(_applicationConfiguration.Scheduling.DatabaseBackup.IsEnabled)
             {
-                _installUpdatesTimersList = _initializeTimers(_applicationConfiguration.Scheduling.DatabaseBackup.Schedules,
-                    _installUpdatesObserversNotification, _applicationConfiguration.Scheduling.DatabaseBackup.RandomDelayInterval).ToList();
+                _closeSessionsTimersList = _initializeTimers(_applicationConfiguration.Scheduling.DatabaseBackup.Schedules,
+                    _databaseBackupsObserversNotification, _applicationConfiguration.Scheduling.DatabaseBackup.RandomDelayInterval).ToList();
             }
         }
 
-        private static void _deleteTimers()
+        /// <summary>
+        /// Method dispose all timers and removes them from collection
+        /// </summary>
+        private static void _cleanTimers()
         {
-            if (_maintenanceTimersList != null && _maintenanceTimersList.Any())
+            if (_updateDatabaseTimersList != null && _updateDatabaseTimersList.Any())
             {
-                _maintenanceTimersList.KillTimers();
-                _maintenanceTimersList.Clear();
+                _updateDatabaseTimersList.KillTimers();
+                _updateDatabaseTimersList.Clear();
             }
 
-            if (_installUpdatesTimersList != null && _installUpdatesTimersList.Any())
+            if (_closeSessionsTimersList != null && _closeSessionsTimersList.Any())
             {
-                _installUpdatesTimersList.KillTimers();
-                _installUpdatesTimersList.Clear();
+                _closeSessionsTimersList.KillTimers();
+                _closeSessionsTimersList.Clear();
             }
         }
 
@@ -111,7 +144,7 @@ namespace TaskScheduling.Scheduling
             }
         }
         
-        private void _installUpdatesObserversNotification(Guid timerId)
+        private void _databaseBackupsObserversNotification(Guid timerId)
         {
             try
             {
@@ -129,12 +162,12 @@ namespace TaskScheduling.Scheduling
             finally
             {
                 if(timerId != Guid.Empty)
-                    _installUpdatesTimersList.RescheduleTimer(timerId, TimeSpan.FromHours(24));
+                    _closeSessionsTimersList.RescheduleTimer(timerId, TimeSpan.FromHours(24));
             }
             
         }
 
-        private void _maintenanceObserversNotification(Guid timerId)
+        private void _closeSessionsObserversNotification(Guid timerId)
         {
 
             try
@@ -153,7 +186,7 @@ namespace TaskScheduling.Scheduling
             finally
             {
                 if(timerId != Guid.Empty)
-                    _maintenanceTimersList.RescheduleTimer(timerId, TimeSpan.FromHours(24));
+                    _updateDatabaseTimersList.RescheduleTimer(timerId, TimeSpan.FromHours(24));
             }
             
         }
