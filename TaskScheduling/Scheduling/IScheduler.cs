@@ -2,7 +2,7 @@
 
 namespace TaskScheduling.Scheduling
 {
-    public interface ITimerScheduler : IObserverSubject
+    public interface IScheduler : IObserverSubject
     {
         void Stop();
 

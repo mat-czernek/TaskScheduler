@@ -10,7 +10,7 @@ namespace TaskSchedulingRunner
     {
         private static IConfiguration AppConfiguration { get; set; }
         
-        private static ITimerScheduler TimeSchedule { get; set; }
+        private static IScheduler TimeSchedule { get; set; }
 
         public static void Main(string[] args)
         {
@@ -20,7 +20,7 @@ namespace TaskSchedulingRunner
 
            var actionsHandler = new ServiceActionsHandler();
 
-           TimeSchedule = new TimerScheduler(AppConfiguration);
+           TimeSchedule = new Scheduler(AppConfiguration);
            
            TimeSchedule.AttachObserver(actionsHandler);
            

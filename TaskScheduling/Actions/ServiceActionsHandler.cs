@@ -25,10 +25,6 @@ namespace TaskScheduling.Actions
                     selfHeal.Execute();
                     return;
                 }
-                
-                default:
-                    break;
-                    
             }
         }
     }

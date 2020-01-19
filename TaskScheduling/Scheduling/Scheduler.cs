@@ -13,7 +13,7 @@ namespace TaskScheduling.Scheduling
     /// <summary>
     /// Class schedules actions using the Tasks (from System.Threading)
     /// </summary>
-    public class TimerScheduler : ITimerScheduler
+    public class Scheduler : IScheduler
     {
         private delegate void TimerCallbackMethodDelegate(Guid timerId);
         
@@ -43,7 +43,7 @@ namespace TaskScheduling.Scheduling
         private bool _isRunning;
 
         
-        public TimerScheduler(IConfiguration applicationConfiguration)
+        public Scheduler(IConfiguration applicationConfiguration)
         {
             _applicationConfiguration = applicationConfiguration;
             
@@ -85,7 +85,7 @@ namespace TaskScheduling.Scheduling
             _isRunning = true;
             
             _cleanTimers();
-            
+ 
             if(_applicationConfiguration.Scheduling.CloseSessions.IsEnabled)
             {
                 _updateDatabaseTimersList = _initializeTimers(_applicationConfiguration.Scheduling.CloseSessions.Schedules,
