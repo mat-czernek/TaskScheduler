@@ -8,29 +8,33 @@ namespace TaskSchedulingRunner
 {
     internal class Program
     {
-        private static IConfiguration AppConfiguration { get; set; }
-        
-        private static IScheduler TimeSchedule { get; set; }
+        private static IConfiguration _applicationConfiguration;
+
+        private static IScheduler _scheduler;
+
+        private static ITimersRepository _timersRepository;
 
         public static void Main(string[] args)
         {
-           AppConfiguration = new Configuration();
+           _applicationConfiguration = new Configuration();
            
-           AppConfiguration.Read("appSettings.json");
+           _applicationConfiguration.Read("appSettings.json");
 
-           var actionsHandler = new ServiceActionsHandler();
-
-           TimeSchedule = new Scheduler(AppConfiguration);
+           _timersRepository = new TimersRepository(_applicationConfiguration);
            
-           TimeSchedule.AttachObserver(actionsHandler);
+           _scheduler = new Scheduler(_timersRepository);
            
-           TimeSchedule.Start();
+           var serviceActionsHandler = new ServiceActionsHandler();
+           
+           _scheduler.AttachObserver(serviceActionsHandler);
+           
+           _scheduler.Start();
            
            Console.ReadKey();
            
-           TimeSchedule.Stop();
+           _scheduler.DetachObserver(serviceActionsHandler);
            
-           TimeSchedule.DetachObserver(actionsHandler);
+           _scheduler.Stop();
         }
     }
 }

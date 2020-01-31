@@ -1,28 +1,41 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using TaskScheduling.Configuration;
 
 namespace TaskScheduling.Services
 {
+    /// <summary>
+    /// Class reads timers settings from the configuration file
+    /// </summary>
     public class Configuration : IConfiguration
     {
-        public SchedulingConfiguration Scheduling { get; private set; }
+        /// <summary>
+        /// List of the timers configurations
+        /// </summary>
+        public List<TimerConfiguration> TimersConfigurationList { get; private set; }
 
         public Configuration()
         {
-            Scheduling = new SchedulingConfiguration();
+            TimersConfigurationList = new List<TimerConfiguration>();
         }
 
+        /// <summary>
+        /// Method reads the timers configurations from the configuration file located in application
+        /// root directory
+        /// </summary>
+        /// <param name="configurationFileName">Name of the configuration file</param>
         public void Read(string configurationFileName)
         {
-            var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, configurationFileName);
+            var configurationFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, configurationFileName);
             
-            var fileContent = File.ReadAllText(filePath);
+            var configurationFileContent = File.ReadAllText(configurationFilePath);
 
-            var jsonObject = JObject.Parse(fileContent);
+            var schedulersConfiguration = JObject.Parse(configurationFileContent)["TimersSettings"];
 
-            Scheduling = jsonObject["SchedulingSettings"].ToObject<SchedulingConfiguration>();
+            TimersConfigurationList = JsonConvert.DeserializeObject<List<TimerConfiguration>>(schedulersConfiguration.ToString());
         }
     }
 }

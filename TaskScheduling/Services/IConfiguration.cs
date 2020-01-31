@@ -1,10 +1,11 @@
-﻿using TaskScheduling.Configuration;
+﻿using System.Collections.Generic;
+using TaskScheduling.Configuration;
 
 namespace TaskScheduling.Services
 {
     public interface IConfiguration
     {
-        SchedulingConfiguration Scheduling { get; }
+        List<TimerConfiguration> TimersConfigurationList { get; }
         
         void Read(string configurationFileName);
     }

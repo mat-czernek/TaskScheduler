@@ -46,8 +46,7 @@
     <Compile Include="Actions\DatabaseBackupAction.cs" />
     <Compile Include="Actions\CloseSessionsAction.cs" />
     <Compile Include="Actions\ServiceActionsHandler.cs" />
-    <Compile Include="Configuration\SchedulingConfiguration.cs" />
-    <Compile Include="Configuration\SchedulingConfigurationItem.cs" />
+    <Compile Include="Configuration\TimerConfiguration.cs" />
     <Compile Include="Enums\ActionType.cs" />
     <Compile Include="Extensions\TimerModelListExtensions.cs" />
     <Compile Include="Models\TimerModel.cs" />
@@ -55,7 +54,10 @@
     <Compile Include="Scheduling\IObserver.cs" />
     <Compile Include="Scheduling\IObserverSubject.cs" />
     <Compile Include="Scheduling\IScheduler.cs" />
+    <Compile Include="Scheduling\ITimersRepository.cs" />
     <Compile Include="Scheduling\Scheduler.cs" />
+    <Compile Include="Scheduling\TimersRepository.cs" />
+    <Compile Include="Scheduling\TimerDelegates.cs" />
     <Compile Include="Services\Configuration.cs" />
     <Compile Include="Services\IConfiguration.cs" />
   </ItemGroup>
