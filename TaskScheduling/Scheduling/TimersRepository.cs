@@ -62,7 +62,7 @@ namespace TaskScheduling.Scheduling
         {
             if (TimersList == null || !TimersList.Any()) return;
             
-            TimersList.KillTimers();
+            TimersList.DisposeTimers();
             TimersList.Clear();
         }
         

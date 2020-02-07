@@ -1,10 +1,13 @@
 ﻿namespace TaskScheduling.Actions
 {
     /// <summary>
-    /// Actions contract
+    /// Interface defines contract of action executed by scheduler
     /// </summary>
     public interface IAction
     {
+        /// <summary>
+        /// Method executes the sample operation
+        /// </summary>
         void Execute();
     }
 }

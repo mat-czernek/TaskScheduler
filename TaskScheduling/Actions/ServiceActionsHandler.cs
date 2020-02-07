@@ -4,10 +4,14 @@ using TaskScheduling.Scheduling;
 namespace TaskScheduling.Actions
 {
     /// <summary>
-    /// Class implements execution of various types of actions
+    /// Class execute action based on the action type. This has been done to easy manage new action types in future.
     /// </summary>
     public class ServiceActionsHandler : IObserver
     {
+        /// <summary>
+        /// Method executes the action based on the type
+        /// </summary>
+        /// <param name="actionType">Type of the action to be executed</param>
         public void RequestActionProcessing(ActionType actionType)
         {
             switch (actionType)

@@ -4,6 +4,9 @@ using TaskScheduling.Enums;
 
 namespace TaskScheduling.Configuration
 {
+    /// <summary>
+    /// Class represents timer configuration. Each public property reflects the single option from the configuration file
+    /// </summary>
     public class TimerConfiguration
     {
         /// <summary>

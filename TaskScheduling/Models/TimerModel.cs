@@ -2,6 +2,9 @@
 
 namespace TaskScheduling.Models
 {
+    /// <summary>
+    /// CLass represents timer model along with properties required to configure it
+    /// </summary>
     public class TimerModel
     {
         public System.Threading.Timer Timer { get; set; }
