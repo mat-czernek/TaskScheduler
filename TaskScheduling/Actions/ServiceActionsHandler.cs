@@ -18,15 +18,15 @@ namespace TaskScheduling.Actions
             {
                 case ActionType.DatabaseBackup:
                 {
-                    var installUpdates = new DatabaseBackupAction();
-                    installUpdates.Execute();
+                    var databaseBackup = new DatabaseBackupAction();
+                    databaseBackup.Execute();
                     return;
                 }
 
                 case ActionType.CloseSessions:
                 {
-                    var selfHeal = new CloseSessionsAction();
-                    selfHeal.Execute();
+                    var closeSession = new CloseSessionsAction();
+                    closeSession.Execute();
                     return;
                 }
             }
